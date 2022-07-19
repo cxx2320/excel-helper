@@ -1,15 +1,13 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Cxx\ExcelHelper;
 
-use PhpOffice\PhpSpreadsheet\Shared\Date;
 use PhpOffice\PhpSpreadsheet\Reader\Xls;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 use Cxx\ExcelHelper\ExcelException;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Reader\BaseReader;
+use SplFileInfo;
 
 /**
  * 表格读取
@@ -47,7 +45,7 @@ class ReadList
     /**
      * 设置文件路径
      *
-     * @param string|\think\file\UploadedFile $filePath
+     * @param string|SplFileInfo $filePath
      * @return $this
      */
     public function setFilePath($filePath)
@@ -161,8 +159,8 @@ class ReadList
     {
         $filePath = $this->filePath;
         //实例化reader
-        $ext = $filePath instanceof \think\file\UploadedFile ? $filePath->extension() : pathinfo($filePath, PATHINFO_EXTENSION);
-        if (!in_array($ext, ['csv', 'xls', 'xlsx'])) {
+        $ext = $filePath instanceof SplFileInfo ? $filePath->getExtension() : pathinfo($filePath, PATHINFO_EXTENSION);
+        if (!in_array($ext, ['xls', 'xlsx'])) {
             throw new ExcelException('文件格式不正确');
         }
         if ($ext === 'xls') {
