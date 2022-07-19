@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace app\common\library;
+namespace Cxx\ExcelHelper;
 
-use Exception;
+use Cxx\ExcelHelper\ExcelException;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
@@ -188,7 +188,7 @@ class ExportList
     public function setStartWriteLine(int $start_write_line)
     {
         if ($start_write_line <= 1) {
-            throw new Exception('start_write_line min 2');
+            throw new ExcelException('start_write_line min 2');
         }
         $this->start_write_line = $start_write_line;
         return $this;

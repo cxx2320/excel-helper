@@ -2,13 +2,12 @@
 
 declare(strict_types=1);
 
-namespace app\common\library;
+namespace Cxx\ExcelHelper;
 
 use PhpOffice\PhpSpreadsheet\Shared\Date;
-use think\file\UploadedFile;
 use PhpOffice\PhpSpreadsheet\Reader\Xls;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
-use app\common\exception\ServiceException;
+use Cxx\ExcelHelper\ExcelException;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Reader\BaseReader;
 
@@ -18,7 +17,7 @@ use PhpOffice\PhpSpreadsheet\Reader\BaseReader;
 class ReadList
 {
     /**
-     * @var string|UploadedFile
+     * @var string|\think\file\UploadedFile
      */
     protected $filePath = '';
 
@@ -48,13 +47,13 @@ class ReadList
     /**
      * 设置文件路径
      *
-     * @param string|UploadedFile $filePath
+     * @param string|\think\file\UploadedFile $filePath
      * @return $this
      */
     public function setFilePath($filePath)
     {
         if (!$filePath) {
-            throw new ServiceException('文件不存在');
+            throw new ExcelException('文件不存在');
         }
         $this->filePath = $filePath;
         return $this;
@@ -103,7 +102,7 @@ class ReadList
         $reader = $this->getReader();
         $insert = [];
         if (!$PHPExcel = $reader->load($filePath)) {
-            throw new ServiceException('文件加载失败');
+            throw new ExcelException('文件加载失败');
         }
         $currentSheet = $PHPExcel->getSheet(0);  //读取文件中的第一个工作表
         $allColumn = $currentSheet->getHighestDataColumn(); //取得最大的列号
@@ -162,9 +161,9 @@ class ReadList
     {
         $filePath = $this->filePath;
         //实例化reader
-        $ext = $filePath instanceof UploadedFile ? $filePath->extension() : pathinfo($filePath, PATHINFO_EXTENSION);
+        $ext = $filePath instanceof \think\file\UploadedFile ? $filePath->extension() : pathinfo($filePath, PATHINFO_EXTENSION);
         if (!in_array($ext, ['csv', 'xls', 'xlsx'])) {
-            throw new ServiceException('文件格式不正确');
+            throw new ExcelException('文件格式不正确');
         }
         if ($ext === 'xls') {
             $reader = new Xls();
@@ -172,11 +171,6 @@ class ReadList
             $reader = new Xlsx();
         }
         return $reader;
-    }
-
-    public static function excelToTimestamp($v)
-    {
-        return Date::excelToTimestamp($v,'Asia/Shanghai');
     }
 
     /**
@@ -188,7 +182,7 @@ class ReadList
     public function setStartWriteLine(int $start_read_line)
     {
         if ($start_read_line <= 0) {
-            throw new \Exception('start_read_line min 2');
+            throw new ExcelException('start_read_line min 2');
         }
         $this->start_read_line = $start_read_line;
         return $this;
