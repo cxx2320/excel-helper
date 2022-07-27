@@ -8,6 +8,7 @@ use Cxx\ExcelHelper\ExcelException;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Reader\BaseReader;
 use SplFileInfo;
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
 
 /**
  * 表格读取
@@ -123,10 +124,13 @@ class ReadList
             $temp = array_combine($fields, $values);
             foreach ($temp as $k => $v) {
                 if (isset($fieldArr[$k]) && $k !== '') {
+                    if($v instanceof RichText){
+                        $v = $v->getPlainText();
+                    }
                     $row[$fieldArr[$k]] = $v;
                 }
             }
-            if ($row) {
+            if ($row && !empty(array_filter($row))) {
                 $insert[] = $row;
             }
             if ($this->isSetChunk() && count($insert) === $this->chunk_num) {
