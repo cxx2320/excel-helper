@@ -113,7 +113,8 @@ class ExportList
      */
     private function setHeader($sheet)
     {
-        $a = $this->wordInc(count($this->header) > 26 ? 2 : 1);
+        $level = (int)ceil(count($this->header) / 26);
+        $a = $this->wordInc($level);
         $i = 0;
         foreach ($this->header as $head => $field) {
             $sheet->setCellValue($a[$i++] . '1', $head);
@@ -129,7 +130,8 @@ class ExportList
     private function writeData($sheet)
     {
         $line = $this->start_write_line;
-        $a = $this->wordInc(count($this->header) > 26 ? 2 : 1);
+        $level = (int)ceil(count($this->header) / 26);
+        $a = $this->wordInc($level);
         $i = 0;
         foreach ($this->exportData as $item) {
             foreach ($this->header as $field) {
